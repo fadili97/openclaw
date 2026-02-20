@@ -37,6 +37,7 @@ RUN if [ -n "$OPENCLAW_INSTALL_BROWSER" ]; then \
     fi
 
 COPY . .
+RUN echo "=== DEBUG: vendor ===" && ls /app/vendor/ 2>&1 || true && echo "=== DEBUG: apps ===" && ls /app/apps/ 2>&1 || true && echo "=== DEBUG: vendor/a2ui/renderers ===" && ls /app/vendor/a2ui/renderers/ 2>&1 || true && echo "=== DEBUG: apps/shared ===" && ls /app/apps/shared/ 2>&1 || true
 RUN pnpm build
 # Force pnpm for UI build (Bun may fail on ARM/Synology architectures)
 ENV OPENCLAW_PREFER_PNPM=1
