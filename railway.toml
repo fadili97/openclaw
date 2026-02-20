@@ -2,8 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "node openclaw.mjs gateway --allow-unconfigured --port $PORT --bind 0.0.0.0"
-healthcheckPath = "/health"
+startCommand = "node openclaw.mjs gateway --allow-unconfigured --port $PORT --bind lan"
+healthcheckPath = "/__openclaw/control-ui-config.json"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 
