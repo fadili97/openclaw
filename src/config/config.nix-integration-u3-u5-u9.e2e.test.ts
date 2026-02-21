@@ -207,6 +207,10 @@ describe("Nix integration (U3, U5, U9)", () => {
         ),
       ).toBe(19003);
     });
+
+    it("uses PORT when OPENCLAW_GATEWAY_PORT and config are unset (e.g. Railway)", () => {
+      expect(resolveGatewayPort({}, envWith({ PORT: "8080" }))).toBe(8080);
+    });
   });
 
   describe("U9: telegram.tokenFile schema validation", () => {

@@ -47,15 +47,15 @@ ENV NODE_ENV=production
 # Allow non-root user to write temp files during runtime/tests.
 RUN chown -R node:node /app
 
-# Security hardening: Run as non-root user
-# The node:22-bookworm image includes a 'node' user (uid 1000)
-# This reduces the attack surface by preventing container escape via root privileges
-USER node
+# For Railway/cloud: ensure /data volume is writable by node (entrypoint runs as root, then gosu node).
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gosu && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY scripts/railway-entrypoint.sh /app/railway-entrypoint.sh
+RUN chmod +x /app/railway-entrypoint.sh
 
-# Start gateway server with default config.
-# Binds to loopback (127.0.0.1) by default for security.
-#
-# For container platforms requiring external health checks:
-#   1. Set OPENCLAW_GATEWAY_TOKEN or OPENCLAW_GATEWAY_PASSWORD env var
-#   2. Override CMD: ["node","openclaw.mjs","gateway","--allow-unconfigured","--bind","lan"]
+# Entrypoint fixes /data permissions when a volume is mounted; then runs CMD as node.
+# Security: main process still runs as non-root (node) via gosu.
+ENTRYPOINT ["/app/railway-entrypoint.sh"]
+# Start gateway server. Override with --port $PORT --bind lan for Railway (see railway.toml).
 CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]

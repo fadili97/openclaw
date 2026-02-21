@@ -2,7 +2,8 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "node openclaw.mjs gateway --allow-unconfigured --port $PORT --bind lan"
+# PORT is read from env by the gateway (see resolveGatewayPort); --bind lan exposes the HTTP server.
+startCommand = "node openclaw.mjs gateway --allow-unconfigured --bind lan"
 healthcheckPath = "/__openclaw/control-ui-config.json"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
